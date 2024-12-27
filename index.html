@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek rai jurusan</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        header {
+            background: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .section {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .circle {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 3px solid #007BFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            overflow: hidden;
+        }
+        .result-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+        .percentage {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem 0;
+            background: #f1f1f1;
+        }
+        #video {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        #capture-btn {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #capture-btn:hover {
+            background-color: #218838;
+        }
+        .input-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        input, select {
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .result-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .result-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .result-content {
+            flex-basis: 60%;
+        }
+        .result-content p {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .recommendation-system {
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        /* Make the circles responsive */
+        @media (max-width: 768px) {
+            .circle {
+                width: 180px;
+                height: 180px;
+            }
+
+            .result-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .circle {
+                width: 150px;
+                height: 150px;
+            }
+        }
+
+        /* Ensure images do not exceed the boundaries */
+        .circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Cek Rai UNIV</h1>
+    </header>
+
+    <main>
+        <div class="section result">
+            <h2>Hasil Analisis e bolo</h2>
+            <div class="result-container">
+                <div class="circle" id="user-photo">
+                    <video id="video" autoplay></video>
+                </div>
+                <div class="circle" id="university-logo">
+                    <p style="line-height: 250px; color: #ccc;">Logo</p>
+                </div>
+            </div>
+            <button id="capture-btn">Ambil Foto</button>
+            <div class="percentage" id="compatibility">0%</div>
+            <p class="recommendation" id="final-recommendation"></p>
+        </div>
+
+        <div class="input-section">
+            <h3>Isi Jurusan dan Universitas Pilihanmu </h3>
+            <input type="text" id="desired-major" placeholder="Masukkan Jurusan yang Diinginkan">
+            <select id="desired-university">
+                <option value="Universitas Indonesia">Universitas Indonesia</option>
+                <option value="Institut Teknologi Bandung">Institut Teknologi Bandung</option>
+                <option value="Universitas Gadjah Mada">Universitas Gadjah Mada</option>
+                <option value="Politeknik Negeri Jakarta">Politeknik Negeri Jakarta</option>
+                <option value="Politeknik Elektronika Negeri Surabaya">Politeknik Elektronika Negeri Surabaya</option>
+            </select>
+            <button id="submit-btn" onclick="submitAll()" disabled>Submit</button>
+        </div>
+
+        <div class="result-section" id="result-section">
+            <!-- This will be populated after submission -->
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2024 Cek Rai Khoirul Yardan PENS
+    </footer>
+
+    <script>
+       const data = [
+        { university: "Universitas Indonesia", logo: "https://fia.ui.ac.id/wp-content/uploads/182/2018/01/logo-UI.png", majors: ["Teknik Informatika", "Kedokteran", "Psikologi", "Ekonomi", "Hukum"] },
+        { university: "Institut Teknologi Bandung", logo: "https://upload.wikimedia.org/wikipedia/id/9/95/Logo_Institut_Teknologi_Bandung.png", majors: ["Teknik Mesin", "Teknik Industri", "Desain Produk", "Sistem Informasi"] },
+        { university: "Universitas Gadjah Mada", logo: "https://ugm.ac.id/wp-content/uploads/2022/11/LOGO-UGM-BAKU-tnp-back-grou-300x300.jpg", majors: ["Hukum", "Ekonomi", "Pertanian", "Geografi", "Psikologi"] },
+        { university: "Politeknik Negeri Jakarta", logo: "https://upload.wikimedia.org/wikipedia/id/1/16/Logo_Politeknik_Negeri_Jakarta.jpg", majors: ["Teknik Komputer", "Manajemen Informatika", "Desain Komunikasi Visual", "Akuntansi"] },
+        { university: "Politeknik Elektronika Negeri Surabaya", logo: "https://upload.wikimedia.org/wikipedia/id/4/44/Logo_PENS.png", majors: ["Teknik Elektronika", "Teknik Komputer", "Telekomunikasi", "Manajemen Informatika"] },
+        { university: "Universitas Negeri Yogyakarta", logo: "https://www.uny.ac.id/sites/default/files/inline-images/logo-uny.png", majors: ["Pendidikan Bahasa Indonesia", "Pendidikan Matematika", "Sastra Inggris"] },
+        { university: "Universitas Airlangga", logo: "https://w7.pngwing.com/pngs/786/107/png-transparent-airlangga-university-fakultas-kedokteran-universitas-airlangga-faculty-id-miscellaneous-logo-university-thumbnail.png", majors: ["Kedokteran", "Ilmu Komunikasi", "Manajemen"] },
+        { university: "Universitas Bina Nusantara", logo: "https://upload.wikimedia.org/wikipedia/id/a/a2/Logo_Binus_University.png", majors: ["Ilmu Komputer", "Desain Grafis", "Sistem Informasi", "Akuntansi"] },
+        { university: "Politeknik Negeri Medan", logo: "https://polmed.ac.id/wp-content/uploads/2017/07/POLMED-FLAT-DESIGN-putih.jpg", majors: ["Manajemen Informatika", "Teknik Mesin", "Akuntansi"] },
+        { university: "Universitas Negeri Surabaya", logo: "https://upload.wikimedia.org/wikipedia/id/thumb/5/53/Logo_Universitas_Negeri_Surabaya_Terbaru.JPG/800px-Logo_Universitas_Negeri_Surabaya_Terbaru.JPG", majors: ["Pendidikan Teknik Informatika", "Pendidikan Bahasa Inggris", "Manajemen", "Sastra Jepang"] },
+        { university: "Institut Teknologi Sepuluh Nopember", logo: "https://www.its.ac.id/wp-content/uploads/2020/07/Lambang-ITS-2-300x300.png", majors: ["Teknik Informatika", "Teknik Elektro", "Sistem Informasi", "Teknik Kimia"] },
+    ];
+
+    let videoElement = document.getElementById('video');
+    let captureButton = document.getElementById('capture-btn');
+    let userPhoto = document.getElementById('user-photo');
+    let compatibility = document.getElementById('compatibility');
+    let recommendation = document.getElementById('final-recommendation');
+    let resultSection = document.getElementById('result-section');
+    let universityLogo = document.getElementById('university-logo');
+    let submitButton = document.getElementById('submit-btn');
+
+    let isPhotoCaptured = false;
+
+   // Start video stream from the camera
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        videoElement.srcObject = stream;
+    })
+    .catch(error => {
+        console.error('Error accessing the camera', error);
+    });
+    captureButton.addEventListener('click', function() {
+    if (isPhotoCaptured) return;  // Cek apakah foto sudah diambil sebelumnya
+
+    let canvas = document.createElement('canvas');
+    let context = canvas.getContext('2d');
+    canvas.width = videoElement.videoWidth;
+    canvas.height = videoElement.videoHeight;
+    context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas to image and display it
+    let img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.style.width = '100%';
+    img.style.height = '100%';
+    userPhoto.innerHTML = '';
+    userPhoto.appendChild(img);
+
+    // Enable submit button after capturing photo
+    isPhotoCaptured = true;
+    submitButton.disabled = false;
+
+    // Disable capture button to prevent multiple clicks
+    captureButton.disabled = true; 
+});
+
+function submitAll() {
+    if (!isPhotoCaptured) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Foto Belum Diambil',
+            text: 'Foto sek bro'
+        });
+        return;
+    }
+
+    // Disable submit button to prevent multiple submissions
+    submitButton.disabled = true;
+
+    // Get user input
+    const desiredMajor = document.getElementById('desired-major').value;
+    const desiredUniversity = document.getElementById('desired-university').value;
+
+    // Check if the entered major exists
+    const universityData = data.find(u => u.university === desiredUniversity);
+    if (!universityData || !universityData.majors.includes(desiredMajor)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Data Tidak Ditemukan',
+            text: 'Tulis lebih lengkap, jika tidak ada berarti salah univ'
+        });
+        submitButton.disabled = false;
+        return;
+    }
+
+    // Generate random recommendation avoiding user's choice
+    let randomUniversity, randomMajor;
+    
+    do {
+        randomUniversity = data[Math.floor(Math.random() * data.length)];
+        randomMajor = randomUniversity.majors[Math.floor(Math.random() * randomUniversity.majors.length)];
+    } while (randomUniversity.university === desiredUniversity && randomMajor === desiredMajor);
+
+    const randomPercentage = Math.floor(Math.random() * 100) + 1;
+
+    // Get user percentage
+    const userPercentage = Math.floor(Math.random() * 100) + 1;
+
+    // Display results
+    universityLogo.innerHTML = `<img src="${randomUniversity.logo}" alt="${randomUniversity.university}" style="width: 150px; height: 150px; border-radius: 50%;">`;
+    compatibility.innerHTML = `${randomPercentage}%`;
+    recommendation.innerHTML = `<p>Rekomendasi Sistem: ${randomMajor} di ${randomUniversity.university}</p>`;
+    resultSection.innerHTML = `
+        <div class="result-content">
+            <h3>Rekomendasi Berdasarkan Pilihan Anda</h3>
+            <p>Anda memilih jurusan <b>${desiredMajor}</b> di <b>${desiredUniversity}</b>.</p>
+            <p>Persentase kecocokan dengan pilihan Anda: <b>${userPercentage}%</b></p>
+        </div>
+    `;
+}
+    </script>
+</body>
+</html>
