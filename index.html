@@ -133,7 +133,6 @@
             }
         }
 
-        /* Ensure images do not exceed the boundaries */
         .circle img {
             width: 100%;
             height: 100%;
@@ -176,7 +175,6 @@
         </div>
 
         <div class="result-section" id="result-section">
-            <!-- This will be populated after submission -->
         </div>
     </main>
 
@@ -210,7 +208,7 @@
 
     let isPhotoCaptured = false;
 
-   // Start video stream from the camera
+   
 navigator.mediaDevices.getUserMedia({ video: true })
     .then(stream => {
         videoElement.srcObject = stream;
@@ -227,7 +225,7 @@ navigator.mediaDevices.getUserMedia({ video: true })
     canvas.height = videoElement.videoHeight;
     context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-    // Convert canvas to image and display it
+   
     let img = document.createElement('img');
     img.src = canvas.toDataURL('image/png');
     img.style.width = '100%';
@@ -235,11 +233,11 @@ navigator.mediaDevices.getUserMedia({ video: true })
     userPhoto.innerHTML = '';
     userPhoto.appendChild(img);
 
-    // Enable submit button after capturing photo
+   
     isPhotoCaptured = true;
     submitButton.disabled = false;
 
-    // Disable capture button to prevent multiple clicks
+   
     captureButton.disabled = true; 
 });
 
@@ -253,14 +251,14 @@ function submitAll() {
         return;
     }
 
-    // Disable submit button to prevent multiple submissions
+    
     submitButton.disabled = true;
 
-    // Get user input
+    
     const desiredMajor = document.getElementById('desired-major').value;
     const desiredUniversity = document.getElementById('desired-university').value;
 
-    // Check if the entered major exists
+   
     const universityData = data.find(u => u.university === desiredUniversity);
     if (!universityData || !universityData.majors.includes(desiredMajor)) {
         Swal.fire({
@@ -272,7 +270,7 @@ function submitAll() {
         return;
     }
 
-    // Generate random recommendation avoiding user's choice
+   
     let randomUniversity, randomMajor;
     
     do {
@@ -282,10 +280,10 @@ function submitAll() {
 
     const randomPercentage = Math.floor(Math.random() * 100) + 1;
 
-    // Get user percentage
+   
     const userPercentage = Math.floor(Math.random() * 100) + 1;
 
-    // Display results
+   
     universityLogo.innerHTML = `<img src="${randomUniversity.logo}" alt="${randomUniversity.university}" style="width: 150px; height: 150px; border-radius: 50%;">`;
     compatibility.innerHTML = `${randomPercentage}%`;
     recommendation.innerHTML = `<p>Rekomendasi Sistem: ${randomMajor} di ${randomUniversity.university}</p>`;
